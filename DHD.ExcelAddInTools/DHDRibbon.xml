@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<customUI xmlns="http://schemas.microsoft.com/office/2009/07/customui" onLoad="Ribbon_Load">
+  <ribbon>
+    <tabs>
+
+      <!-- idMso对应的是 Office 内建选项卡的ID  -->
+      <tab id="TabDHD" label="【海东工具箱】" visible="true" insertAfterMso="TabInsert">
+        
+        <!-- 
+        ==============================
+        内容处理
+        ==============================
+        -->
+        <group id="grpMergeAndSeparate" label="文本处理">
+          <!-- 单元格文本合并 -->
+          <button id="DHD_BTN_MergeCellText" label="合并" onAction="OnClick_Text" imageMso="M" description="拼合单元格文本" supertip="将选中的单元格的文本进行拼合。"/>
+          <button id="DHD_BTN_SeparateCellText" label="拆分" onAction="OnClick_Text" imageMso="S" description="拆分单元格文本" supertip="将选中的单元格的文本进行拆分。"/>
+        </group>
+
+
+        <group id="grpDevTools" label="开发调试">
+          <button id="DHD_DEV_ShowAssemblyInfo" label="程序集信息" onAction="OnClick_DEV" imageMso="D" description="显示程序集信息"/>
+        </group>
+      </tab>
+    </tabs>
+  </ribbon>
+
+  <!-- 
+  ############################################################
+  右键菜单区域
+  ############################################################
+  -->
+  <contextMenus>
+    <!-- 表格对象单元格右键菜单 -->
+    <contextMenu idMso="ContextMenuListRange">
+      <menu id="DHD_ContextMenuListRange_InsertDateTime" label="插入日期时间" imageMso="SlideShowRehearseTimings" insertAfterMso="Copy">
+        <button id="DHD_ContextMenuListRange_InsertDate" getImage="Get_ControlImage" label="插入日期" onAction="OnClick_InsertDateTime"/>
+        <button id="DHD_ContextMenuListRange_InsertTime" getImage="Get_ControlImage" label="插入时间" onAction="OnClick_InsertDateTime"/>
+      </menu>
+    </contextMenu>
+    <!-- 普通单元格右键菜单 -->
+    <contextMenu idMso="ContextMenuCell">
+      <menu id="DHD_ContextMenuCell_InsertDateTime" label="插入日期时间" imageMso="SlideShowRehearseTimings" insertAfterMso="Copy">
+        <button id="DHD_ContextMenuCell_InsertDate" getImage="Get_ControlImage" label="插入日期" onAction="OnClick_InsertDateTime"/>
+        <button id="DHD_ContextMenuCell_InsertTime" getImage="Get_ControlImage" label="插入时间" onAction="OnClick_InsertDateTime"/>
+      </menu>
+    </contextMenu>
+  </contextMenus>
+
+
+
+</customUI>
+
