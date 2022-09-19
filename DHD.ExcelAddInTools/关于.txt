@@ -1,8 +1,22 @@
 ﻿必要说明：
 	生成之后的文件夹打包，拷贝到目标电脑，运行DHD.ExcelAddInTools.vsto进行安装
 	如果之前安装过，需要先通过控制面板的程序管理卸载已有的，然后重新安装。如果直接覆盖，无法加载新的程序集
+	如果卸载之后，安装提示已经存在，运行如下的清除命令：
+		"C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools\mage.exe" -cc
 		：：默认是从程序集缓存中加载，例如：C:\Users\SKAdmin\AppData\Local\assembly\dl3
 	ClickOnce签名与程序集签名文件，复制到程序生成的相同目录（属性的复制到输出目录修改为始终复制）
+
+
+网络发布：
+	线上部署
+		工程属性-发布，指定安装的网站
+		线上直接访问vsto后缀文件进行安装
+		遇到错误提示：System.Security.SecurityException: 此应用程序中的自定义功能将不起作用，原因是用于为 DHD.ExcelAddInTools 的部署清单签名的证书或其位置不受信任。请向管理员寻求进一步帮助。
+			:解决办法，写注册表
+			[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\Security\TrustManager\PromptingLevel] "MyComputer"="Enabled" "LocalIntranet"="Enabled" "TrustedSites"="Enabled" "Internet"="Enabled" "UntrustedSites"="Enabled"
+			[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\Security\TrustManager\PromptingLevel]"MyComputer"="Enabled""LocalIntranet"="Enabled""Internet"="Enabled""TrustedSites"="Enabled""UntrustedSites"="Enabled"
+
+			TODO：[20220919] - 这里需要完成一个python脚本进行写入注册表信任区与写入可信任站点
 
 
 历史记录

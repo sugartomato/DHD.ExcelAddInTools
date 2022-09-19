@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using Office = Microsoft.Office.Core;
+using MSExcel = Microsoft.Office.Interop.Excel;
 
 // TODO:   按照以下步骤启用功能区(XML)项:
 
@@ -194,6 +195,123 @@ namespace DHD.ExcelAddInTools
 
         #endregion
 
+        #region 固定文件列表
+
+        public void OnClick_PinnedFiles(Office.IRibbonControl ctrl)
+        {
+            if (System.Windows.Forms.MessageBox.Show("是否要添加？", "",
+                System.Windows.Forms.MessageBoxButtons.YesNo,
+                System.Windows.Forms.MessageBoxIcon.Question) != System.Windows.Forms.DialogResult.Yes)
+            {
+                return;
+            }
+
+            List<Model.PinnedFile> files = Config.PinnedFiles;
+            if (files == null)
+            {
+                files = new List<Model.PinnedFile>();
+            }
+
+            // 检查是否已经存在
+            foreach (var f in files)
+            {
+                if (f.FilePath == Common.ActiveBook?.FullName)
+                {
+                    return;
+                }
+            }
+
+            // 添加到固定列表
+            Model.PinnedFile tmpFile = new Model.PinnedFile();
+            tmpFile.FilePath = Common.ActiveBook?.FullName;
+            tmpFile.FileName = Common.ActiveBook?.Name;
+            tmpFile.Mark = System.Guid.NewGuid().ToString("N").ToUpper();
+            files.Add(tmpFile);
+
+            Config.PinnedFiles = files;
+            Config.SaveConfig();
+            ribbon.InvalidateControl("DHD_LIST_PinnedFiles");
+            MsgBox.Show("添加完成！");
+        }
+
+        public void OnClick_OpenPinnedFiles(Office.IRibbonControl ctrl, String selectedID, Int32 selectedIndex)
+        {
+            List<Model.PinnedFile> files = Config.PinnedFiles;
+            if (files == null || files.Count == 0)
+            {
+                return;
+            }
+            Common.App.Workbooks.Open(files[selectedIndex]?.FilePath);
+        }
+
+        public Int32 PinnedFiles_GetCount(Office.IRibbonControl ctrl)
+        {
+            List<Model.PinnedFile> files = Config.PinnedFiles;
+            if (files == null)
+            {
+                return 0;
+            }
+            return files.Count;
+        }
+
+        public String PinnedFiles_GetLabel(Office.IRibbonControl ctrl, Int32 index)
+        {
+            List<Model.PinnedFile> files = Config.PinnedFiles;
+            if (files == null)
+            {
+                return String.Empty;
+            }
+            return String.Format("【{0}】|{1}", files[index].FileName, files[index].FilePath);
+        }
+
+        public String PinnedFiles_GetItemID(Office.IRibbonControl ctrl, Int32 index)
+        {
+            List<Model.PinnedFile> files = Config.PinnedFiles;
+            if (files == null)
+            {
+                return String.Empty;
+            }
+            return files[index].Mark;
+        }
+
+        #endregion
+
+        #region 文件导出
+
+        public void OnClick_Export(Office.IRibbonControl ctrl)
+        {
+            try
+            {
+                switch (ctrl.Id)
+                {
+                    case "DHD_BTN_Export_FileWithValue":    // 导出文件为纯数值格式
+                        MSExcel.Workbook _sourceBook = Common.ActiveBook;
+                        MSExcel.Workbook _targetBook = Globals.ThisAddIn.Application.Workbooks.Add();
+                        foreach (MSExcel.Worksheet sheet in _sourceBook.Worksheets)
+                        {
+                            sheet.Copy(After: _targetBook.Worksheets[_targetBook.Worksheets.Count]);
+                        }
+
+                        foreach (MSExcel.Worksheet sheet in _targetBook.Worksheets)
+                        {
+                            sheet.Range[sheet.UsedRange.Address].Copy();
+                            sheet.Range[sheet.UsedRange.Address].PasteSpecial(MSExcel.XlPasteType.xlPasteValuesAndNumberFormats);
+                        }
+
+                        _targetBook.SaveAs();
+                        break;
+                    default:
+                        MsgBox.Show("没有定义的处理分支！");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MsgBox.Show(ex.Message);
+            }
+        }
+
+        #endregion
 
         #region 开发调试
 
@@ -207,6 +325,13 @@ namespace DHD.ExcelAddInTools
                     sb.AppendLine($"{nameof(assembly.Location)}\t{assembly.Location}");
 
                     MsgBox.Show(sb.ToString());
+                    break;
+                case "DHD_DEV_ShowConfigFilePath":
+                    MsgBox.Show(Config.FilePath);
+                    break;
+                case "DHD_DEV_ShowVersion":
+                    String ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                    MsgBox.Show(ver);
                     break;
                 default:
                     break;

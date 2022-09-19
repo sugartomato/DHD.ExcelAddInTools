@@ -5,7 +5,20 @@
 
       <!-- idMso对应的是 Office 内建选项卡的ID  -->
       <tab id="TabDHD" label="【海东工具箱】" visible="true" insertAfterMso="TabInsert">
-        
+
+        <!-- 
+        ====================
+        固定文件列表
+        ====================
+        -->
+        <group id="ZS_GRP_PinnedFiles" label="常用文件">
+          <gallery id="DHD_LIST_PinnedFiles" label="常用文件" imageMso="ZoomOnePage" size="large"
+                   onAction="OnClick_OpenPinnedFiles"  getItemCount="PinnedFiles_GetCount" getItemLabel="PinnedFiles_GetLabel" getItemID="PinnedFiles_GetItemID">
+          </gallery>
+           <button id="DHD_BTN_PiddedFile" label="添加" onAction="OnClick_PinnedFiles" imageMso="Pushpin" description="固定此文件" supertip="将此打开的文件添加到固定列表" size="large"/>
+        </group>
+
+
         <!-- 
         ==============================
         内容处理
@@ -15,12 +28,25 @@
           <!-- 单元格文本合并 -->
           <button id="DHD_BTN_MergeCellText" label="合并" onAction="OnClick_Text" imageMso="M" description="拼合单元格文本" supertip="将选中的单元格的文本进行拼合。"/>
           <button id="DHD_BTN_SeparateCellText" label="拆分" onAction="OnClick_Text" imageMso="S" description="拆分单元格文本" supertip="将选中的单元格的文本进行拆分。"/>
+          <!-- 前后缀 -->
+          <button id="DHD_BTN_InsertPreSuffix"
+                  label="前缀后缀"
+                  size="large"
+                  imageMso="TextEffectTracking"
+                  onAction="OnClick_Text"
+                  description="在选中区域每个单元内容的前后添加指定的内容。"
+                  ></button>
         </group>
 
+        <group id="grpExportTools" label="导出">
+          <button size="large" id="DHD_BTN_Export_FileWithValue" label="导出数值版" onAction="OnClick_Export" imageMso="E" description="将当前文件导出为无公式数值版"></button>
+        </group>
 
         <group id="grpDevTools" label="开发调试">
           <button id="DHD_DEV_ShowAssemblyInfo" label="程序集信息" onAction="OnClick_DEV" imageMso="D" description="显示程序集信息"/>
-        </group>
+          <button id="DHD_DEV_ShowConfigFilePath" label="配置文件路径" onAction="OnClick_DEV" imageMso="DropCapOptionsDialog" description="显示配置文件路径"/>
+          <button id="DHD_DEV_ShowVersion" label="版本号" onAction="OnClick_DEV" imageMso="V" description="显示版本号"/>
+       </group>
       </tab>
     </tabs>
   </ribbon>
